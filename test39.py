@@ -27,3 +27,4 @@ def update_tool():
         print(f"Error updating tool: {e}")
 
 update_tool()
+print("done")
