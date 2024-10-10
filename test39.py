@@ -57,3 +57,4 @@ def update_tool():
 if __name__ == "__main__":
     if check_for_updates():
         update_tool()
+        prinr("hello")
