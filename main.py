@@ -42,5 +42,6 @@ with open("config.json") as file:
     data = json.load(file)
 
 if git_data["ver"] != data["ver"]:
+    print("updating script")
     download("main.py")     # updates main script
     download("config.json") # updates json file
