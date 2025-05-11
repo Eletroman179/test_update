@@ -4,7 +4,7 @@ import os
 
 def view(file_path: str, repo: str = "Eletroman179/test_update", branch: str = "main"):
     url = f"https://raw.githubusercontent.com/{repo}/{branch}/{file_path}"
-    response = requests.get(url)
+    response = requests.get(url, headers={"Cache-Control": "no-cache"})
     if response.status_code == 200:
         return response.text
     else:
@@ -37,6 +37,7 @@ remote_json_text = view("config.json")
 if remote_json_text:
     try:
         remote_data = json.loads(remote_json_text)
+        print(f"[debug] {remote_data['ver']}")
 
         if remote_data["ver"] != local_data["ver"]:
             print(f"Updating script from version {local_data['ver']} to {remote_data['ver']}")
