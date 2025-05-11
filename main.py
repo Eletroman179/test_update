@@ -37,7 +37,6 @@ def download(
 json_text = view("config.json")
 if json_text:
     git_data = json.loads(json_text)
-    print(git_data)
 
 with open("config.json") as file:
     data = json.load(file)
