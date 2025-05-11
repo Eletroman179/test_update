@@ -1,29 +1,47 @@
-import os #hello
-import sys
-import subprocess
+import requests
+import json
 
-def update_script():
-    """
-    Pull the latest changes from the GitHub repository
-    and restart the script.
-    """
-    try:
-        # Run `git pull` to fetch updates
-        subprocess.run(['git', 'pull'], check=True)
-        print("Successfully updated the script. Restarting...")
+def view(
+    file_path: str,
+    filename: str = None,
+    repo: str = "Eletroman179/test_update",
+    branch: str = "main"):
+    url = f"https://raw.githubusercontent.com/{repo}/{branch}/{file_path}"
+    
+    response = requests.get(url)
 
-        # Restart the script with updated code
-        os.execv(sys.executable, ['python'] + sys.argv)
+    if response.status_code == 200:
+        return response.text
+    else:
+        print(f"Failed to fetch file: {response.status_code}")
+        return None
 
-    except subprocess.CalledProcessError as e:
-        print(f"Error while updating: {e}")
-        sys.exit(1)  # Exit if git pull fails
+def download(
+    file_path: str,
+    filename: str = None,
+    repo: str = "Eletroman179/test_update",
+    branch: str = "main"
+):
+    raw_url = f"https://raw.githubusercontent.com/{repo}/{branch}/{file_path}"
+    if filename is None:
+        filename = file_path.split("/")[-1]
 
+    response = requests.get(raw_url)
+    if response.status_code == 200:
+        with open(filename, 'wb') as f:
+            f.write(response.content)
+        print(f"Downloaded '{filename}' from '{repo}'")
+    else:
+        print(f"Failed to download '{file_path}' from '{repo}': {response.status_code}")
 
-# Usage: check if the script should update
-if __name__ == '__main__':
-    # Call the update function to update the script
-    update_script()
+json_text = view("config.json")
+if json_text:
+    git_data = json.loads(json_text)
+    print(git_data)
 
-    # Your main script logic here
-    print("Running the updated script...")
+with open("config.json") as file:
+    data = json.load(file)
+
+if git_data["ver"] != data["ver"]:
+    download("main.py")     # updates main script
+    download("config.json") # updates json file
